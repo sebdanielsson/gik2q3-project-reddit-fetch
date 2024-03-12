@@ -2,8 +2,8 @@ package com.sebdanielsson;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Scanner;
 import org.json.JSONArray;
@@ -11,8 +11,7 @@ import org.json.JSONObject;
 
 public class Main {
     public static void main(String[] args) {
-        String endpointURL = "https://www.reddit.com/r/relationship_advice/new.json?limit=100"; // Retrieve up to 100
-                                                                                                // posts
+        String endpointURL = "https://www.reddit.com/r/relationship_advice/new.json?limit=100"; // 100 posts
         int iterations = 10; // Number of iterations
 
         try {
@@ -22,8 +21,9 @@ public class Main {
             // Iterate 10 times to collect more posts
             String after = null;
             for (int i = 0; i < iterations; i++) {
-                // Send the request to the Reddit API
-                URL url = new URL(endpointURL + (after != null ? "&after=" + after : ""));
+                // Convert String URL to URI, then to URL
+                URI uri = new URI(endpointURL + (after != null ? "&after=" + after : ""));
+                URL url = uri.toURL();
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
 
@@ -60,7 +60,7 @@ public class Main {
 
             // Close the BufferedWriter
             writer.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
